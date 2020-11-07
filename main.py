@@ -36,9 +36,9 @@ def actionEmoji(status):
     """
 
     if status == 'success':
-        return ':sunglasses:'
+        return ':heavy_check_mark:'
     elif status == 'failure':
-        return ':worried:'
+        return ':x:'
 
     return ':zipper_mouth_face:'
 
@@ -57,17 +57,17 @@ def notify_slack(job_status, notify_when):
     status_message = actionStatus(job_status)
     emoji = actionEmoji(job_status)
 
-    message = f'{emoji} {workflow} {status_message} in <{repo_url}|{repo}@{branch}> on <{commit_url}|{commit[:7]}>.'
+    message = f'{emoji} {workflow} **{status_message}** in <{repo_url}|{repo}@{branch}> on <{commit_url}|{commit[:7]}>.'
 
     payload = {
         'attachments': [
             {
                 'text': message,
-                'fallback': 'New Github Action Run',
-                'pretext': 'New Github Action Run',
+                'fallback': 'Github Action',
+                'pretext': 'Github Action',
                 'color': color,
                 'mrkdwn_in': ['text'],
-                'footer': 'Developed by <https://www.ravsam.in|RavSam>',
+                'footer': 'By <https://github.com/asomas/notify-slack-action|asomas/notify-slack-action>',
             }
         ]
     }
