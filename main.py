@@ -23,11 +23,11 @@ def actionStatus(status):
     """
 
     if status == 'success':
-        return 'passed'
+        return 'SUCCESS'
     elif status == 'failure':
-        return 'failed'
+        return 'FAILED'
 
-    return 'passed with warnings'
+    return 'WARNING'
 
 
 def actionEmoji(status):
@@ -57,14 +57,18 @@ def notify_slack(job_status, notify_when):
     status_message = actionStatus(job_status)
     emoji = actionEmoji(job_status)
 
-    message = f'{emoji} {workflow} **{status_message}** in <{repo_url}|{repo}@{branch}> on <{commit_url}|{commit[:7]}>.'
+    pretext = f'<{repo_url}|{repo} ({branch})>'
+    text = f'{emoji} {workflow}\n\n*• Status*: {status_message}\n• *Commit*: <{commit_url}|{commit[:7]}>'
+    fallback = f'{workflow} {status_message} {repo_url}'
 
     payload = {
+        'username': 'Github Action',
+        'icon_emoji': ':octocat:',
         'attachments': [
             {
-                'text': message,
-                'fallback': 'Github Action',
-                'pretext': 'Github Action',
+                'text': text,
+                'fallback': fallback,
+                'pretext': pretext,
                 'color': color,
                 'mrkdwn_in': ['text'],
                 'footer': 'By <https://github.com/asomas/notify-slack-action|asomas/notify-slack-action>',
