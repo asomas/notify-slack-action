@@ -49,6 +49,8 @@ def notify_slack(job_status, notify_when):
     repo = os.getenv('GITHUB_REPOSITORY')
     branch = os.getenv('GITHUB_REF')
     commit = os.getenv('GITHUB_SHA')
+    author = os.getenv('GITHUB_ACTOR')
+    commit_message = os.getenv('COMMIT_MESSAGE')
 
     commit_url = f'https://github.com/{repo}/commit/{commit}'
     repo_url = f'https://github.com/{repo}/tree/{branch}'
@@ -58,12 +60,14 @@ def notify_slack(job_status, notify_when):
     emoji = actionEmoji(job_status)
 
     pretext = f'<{repo_url}|{repo} ({branch})>'
-    text = f'{emoji} {workflow}\n\n*• Status*: {status_message}\n• *Commit*: <{commit_url}|{commit[:7]}>'
-    fallback = f'{workflow} {status_message} {repo_url}'
+    text = f'{emoji} {workflow}\n\n*• Status*: {status_message}\n• *Author*: {author}\n• *Commit*: <{commit_url}|{commit[:7]}>'
+    fallback = f'{workflow} {status_message} {repo_url} by {author}'
+    if commit_message:
+        text += f'\n• *Message*: {commit_message}'
 
     payload = {
         'username': 'Github Action',
-        'icon_emoji': ':octocat:',
+        'icon_emoji': ':rocket:',
         'attachments': [
             {
                 'text': text,
